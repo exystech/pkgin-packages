@@ -3,18 +3,18 @@ name: Build pkgsrc-ng Packages
 on:
   push:
     branches:
-      - main  # Esegui quando fai push su main
+      - main
   pull_request:
     branches:
-      - main  # Esegui anche per PR verso main
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Usa Ubuntu per il build
+    runs-on: ubuntu-latest
     
     steps:
     - name: Check out the repository
-      uses: actions/checkout@v2  # Clona il repository
+      uses: actions/checkout@v2
     
     - name: Set up environment
       run: |
@@ -23,7 +23,7 @@ jobs:
 
     - name: Set environment for BSD-compatible shell
       run: |
-        export SH=/bin/sh  # Usa /bin/sh come shell compatibile con BSD
+        export SH=/bin/sh
 
     - name: Clone pkgsrc-ng repository
       run: |
@@ -34,6 +34,7 @@ jobs:
       run: |
         cd pkgsrc-ng/bootstrap
         ./bootstrap --prefix=/usr/pkg
+        export SH=/bin/bash
 
     - name: Add pkgsrc to path
       run: |
@@ -44,7 +45,6 @@ jobs:
     - name: Build packages
       run: |
         cd pkgsrc-ng
-        # Per compilare tutti i pacchetti, usa bmake bulk-install
         bmake bulk-install
 
     - name: Prepare the built packages for upload
