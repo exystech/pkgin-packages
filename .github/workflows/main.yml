@@ -60,3 +60,4 @@ jobs:
         author_email: 'exystech@gmail.com'
         message: 'Added newly built pkgsrc-ng packages'
         push: true
+# test
