@@ -21,9 +21,10 @@ jobs:
         sudo apt update
         sudo apt install -y build-essential curl git bmake pkg-config zsh
 
-    - name: Set environment for BSD-compatible shell
+    - name: Set environment for zsh shell
       run: |
-        export SH=/bin/sh
+        export SH=/usr/bin/zsh
+        echo "Using zsh as shell: $SH"
 
     - name: Clone pkgsrc-ng repository
       run: |
@@ -32,9 +33,9 @@ jobs:
 
     - name: Bootstrap pkgsrc-ng
       run: |
+        export SH=/usr/bin/zsh
         cd pkgsrc-ng/bootstrap
         ./bootstrap --prefix=/usr/pkg
-        export SH=/bin/bash
 
     - name: Add pkgsrc to path
       run: |
