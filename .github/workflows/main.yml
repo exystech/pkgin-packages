@@ -35,7 +35,7 @@ jobs:
       run: |
         export SH=/usr/bin/zsh
         cd pkgsrc-ng/bootstrap
-        ./bootstrap --prefix=/usr/pkg
+        ./bootstrap --prefix=/usr/pkg --unprivileged
 
     - name: Add pkgsrc to path
       run: |
