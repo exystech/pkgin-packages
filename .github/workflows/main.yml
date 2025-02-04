@@ -1,0 +1,61 @@
+name: Build pkgsrc-ng Packages
+
+on:
+  push:
+    branches:
+      - main  # Esegui quando fai push su main
+  pull_request:
+    branches:
+      - main  # Esegui anche per PR verso main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Usa Ubuntu per il build
+    
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v2  # Clona il repository
+    
+    - name: Set up environment
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential curl git bmake pkg-config zsh
+
+    - name: Set environment for BSD-compatible shell
+      run: |
+        export SH=/bin/sh  # Usa /bin/sh come shell compatibile con BSD
+
+    - name: Clone pkgsrc-ng repository
+      run: |
+        git clone https://github.com/exystech/pkgsrc-ng.git
+        cd pkgsrc-ng
+
+    - name: Bootstrap pkgsrc-ng
+      run: |
+        cd pkgsrc-ng/bootstrap
+        ./bootstrap --prefix=/usr/pkg
+
+    - name: Add pkgsrc to path
+      run: |
+        echo 'export PATH=/usr/pkg/bin:/usr/pkg/sbin:$PATH' >> ~/.bashrc
+        echo 'export MANPATH=/usr/pkg/man:$MANPATH' >> ~/.bashrc
+        source ~/.bashrc
+
+    - name: Build packages
+      run: |
+        cd pkgsrc-ng
+        # Per compilare tutti i pacchetti, usa bmake bulk-install
+        bmake bulk-install
+
+    - name: Prepare the built packages for upload
+      run: |
+        mkdir -p ~/pkg-repo
+        cp /usr/pkgsrc/packages/* ~/pkg-repo/
+
+    - name: Commit and push the built packages to GitHub
+      uses: EndBug/add-and-commit@v7
+      with:
+        author_name: 'exys'
+        author_email: 'exystech@gmail.com'
+        message: 'Added newly built pkgsrc-ng packages'
+        push: true
